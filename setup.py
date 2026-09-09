@@ -13,9 +13,23 @@ setup(
     author_email="henry.jones@tulip.co",
     url="https://github.com/tulip/relationalize",
     description="A utility for converting/transporting arbitrary JSON data into a relational database",
-    packages=["relationalize"],
-    package_dir={"relationalize": "relationalize"},
-    package_data={"relationalize": ["py.typed"]},
+    packages=[
+        "relationalize",
+        "rtdb_bridge",
+        "rtdb_bridge.schemas",
+    ],
+    package_dir={
+        "relationalize": "relationalize",
+        "rtdb_bridge": "rtdb_bridge",
+        "rtdb_bridge.schemas": "rtdb_bridge/schemas",
+    },
+    package_data={
+        "relationalize": ["py.typed"],
+        "rtdb_bridge.schemas": ["*.json"],
+    },
+    extras_require={
+        "contracts": ["jsonschema>=3.2.0"],
+    },
     include_package_data=True,
     long_description=read("README.md"),
     classifiers=[
