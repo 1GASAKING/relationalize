@@ -425,7 +425,7 @@
                 "refTable": "users_tags",
                 "cardinality": "1:N",
                 "sample": [
-                  "R_150dc2f812354a76969ba74adc7c785d"
+                  "R_6ec6ffbd03d7486da7ae61c2663f9127"
                 ]
               }
             }

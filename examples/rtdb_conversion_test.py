@@ -1,8 +1,9 @@
 r"""
 RTDB (Firebase Realtime Database) JSON tree -> SQL conversion stress test.
 
-This script demonstrates how `relationalize` handles a real RTDB-style export
-containing several top-level collections, each exercising the "ugly" cases:
+This script demonstrates how `rtdb_bridge` (wrapping `relationalize`) handles
+a real RTDB-style export containing several top-level collections, each
+exercising the "ugly" cases:
 
   1. Records stored under Firebase keys (data lost if we don't inject the key)
   2. Keyed maps used instead of real arrays (orders/items/account settings)
@@ -22,16 +23,25 @@ containing several top-level collections, each exercising the "ugly" cases:
  15. Special characters in record field names
  16. Empty collections ({}) handled gracefully
 
+The pipeline logic under test lives in :mod:`rtdb_bridge` (single source of
+truth); this script only supplies the export fixture and assertions.
+
 Run from the project root:
     venv\Scripts\python.exe examples\rtdb_conversion_test.py
 """
 
-import copy
 import json
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any, Dict, List, Tuple
 
-from relationalize import Relationalize, Schema
-from relationalize.utils import create_local_buffer
+from relationalize import Schema
+
+from rtdb_bridge import (
+    ExportPipelineResult,
+    extract_collection_records,
+    relationalize_export,
+    run_pipeline,
+)
+from rtdb_bridge.pipeline import TableInfo
 
 # --------------------------------------------------------------------------- #
 # 1. The combined RTDB export tree exercising every issue listed above
@@ -41,7 +51,7 @@ from relationalize.utils import create_local_buffer
 # Values are kept as keyed maps only when the field-name matches one of these
 # (or when the keys themselves look like push ids "-..."). At the ROOT level,
 # each object under a top-level collection is treated as one record.
-KNOWN_COLLECTION_FIELDS: Set[str] = {
+KNOWN_COLLECTION_FIELDS: List[str] = [
     "orders",
     "items",
     "account_settings",
@@ -50,7 +60,7 @@ KNOWN_COLLECTION_FIELDS: Set[str] = {
     "followers",
     "friends",
     "posts",
-}
+]
 
 RTDB_EXPORT: Dict[str, Dict[str, Any]] = {
     "users": {
@@ -177,111 +187,12 @@ RTDB_EXPORT: Dict[str, Dict[str, Any]] = {
 
 
 # --------------------------------------------------------------------------- #
-# 2. RTDB preprocessing helpers
+# 2. Pipeline helpers (thin wrappers over rtdb_bridge)
 # --------------------------------------------------------------------------- #
-def keyed_maps_to_arrays(value: Any, treat_as_collection: bool = False) -> Any:
-    """
-    Recursively convert RTDB "keyed maps" into real JSON arrays.
-
-    RTDB stores collections as { pushKey: record }.  Relationalize only splits
-    *real arrays* into child tables, so keyed maps must become arrays first.
-
-    A dict is interpreted as a keyed collection when:
-      * every key looks like a Firebase push id ("-..."), OR
-      * `treat_as_collection` is True (field name matched KNOWN_COLLECTION_FIELDS)
-
-    For objects (e.g. {"color": "red"}) and empty objects ("{}"), we keep /
-    collapse them appropriately so plain nested objects keep getting flattened
-    by Relationalize rather than becoming tables.
-    """
-    if isinstance(value, dict):
-        push_keyed = bool(value) and all(str(k).startswith("-") for k in value.keys())
-        empty_leaf = value == {}
-
-        if empty_leaf:
-            # An empty object in an RTDB export is likely an empty collection.
-            return []
-
-        if treat_as_collection or push_keyed:
-            rows = []
-            for key, record in value.items():
-                if isinstance(record, dict):
-                    # Convert nested content first, then inject the key LAST so
-                    # it always remains the artificial relational id.
-                    converted = keyed_maps_to_arrays(record, treat_as_collection=False)
-                    if isinstance(converted, dict) and "record_id" in converted:
-                        # Source already carries the reserved field; preserve it.
-                        converted["source_record_id"] = converted.pop("record_id")
-                    converted["record_id"] = key
-                    rows.append(converted)
-                else:
-                    # Keyed maps with primitive values (presence sets like
-                    # {"u1": true, "u5": true}) lose nothing by becoming rows
-                    # with "record_id" + "value".
-                    rows.append({"record_id": key, "value": record})
-            return rows
-
-        # Ordinary nested object -> keep as object, recurse into values.
-        return {k: keyed_maps_to_arrays(v, treat_as_collection=False) for k, v in value.items()}
-
-    if isinstance(value, list):
-        return [keyed_maps_to_arrays(v, treat_as_collection=False) for v in value]
-
-    return value
-
-
-def extract_collection_records(
-    collection_name: str, raw_tree: Dict[str, Any]
-) -> List[Dict[str, Any]]:
-    """
-    Pull one top-level RTDB collection out of the export tree.
-
-    Example:
-        {"users": {"u1": {...}, "u2": {...}}}
-            -> [{"record_id": "u1", ...}, {"record_id": "u2", ...}]
-    """
-    collection_map = raw_tree[collection_name]  # { key: record, ... }
-    records = []
-    for key, record in collection_map.items():
-        # Never let a source payload field named record_id overwrite the
-        # artificial RTDB row key - preserve the payload value instead.
-        record = {**record}
-        if "record_id" in record:
-            record["source_record_id"] = record.pop("record_id")
-        row: Dict[str, Any] = {"record_id": key}
-        for field, field_value in record.items():
-            is_collection_field = field in KNOWN_COLLECTION_FIELDS
-            row[field] = keyed_maps_to_arrays(field_value, treat_as_collection=is_collection_field)
-        records.append(row)
-    return records
-
-
-# --------------------------------------------------------------------------- #
-# 3. Relationalize + Schema pipeline (in-memory)
-# --------------------------------------------------------------------------- #
-def run_pipeline(
-    collection_name: str, records: List[Dict[str, Any]]
-) -> Tuple[Dict[str, Schema], Dict[str, List[Dict[str, Any]]]]:
-    schemas: Dict[str, Schema] = {}
-
-    def on_object_write(schema_name: str, obj: Dict[str, Any]):
-        if schema_name not in schemas:
-            schemas[schema_name] = Schema()
-        schemas[schema_name].read_object(obj)
-
-    results: Dict[str, List[Dict[str, Any]]] = {}
-    with Relationalize(collection_name, create_local_buffer(), on_object_write) as r:
-        r.relationalize(records)
-        # Drain in-memory buffers BEFORE the context manager closes them.
-        for schema_name, buffer in r.outputs.items():
-            buffer.seek(0)
-            results[schema_name] = [json.loads(line) for line in buffer.readlines()]
-
-    return schemas, results
-
-
 def clean_schema_for(schema: Schema) -> Schema:
     """Return a copy of the schema with null-only columns removed."""
+    import copy
+
     clean = Schema(schema=copy.deepcopy(schema.schema))
     clean.drop_null_columns()
     return clean
@@ -319,7 +230,7 @@ def print_table_summary(
 
 
 # --------------------------------------------------------------------------- #
-# 4. Demonstrate the problem WITHOUT preprocessing
+# 3. Demonstrate the problem WITHOUT preprocessing
 # --------------------------------------------------------------------------- #
 print("\n#####################################################################")
 print("# PIPELINE A: RAW RTDB TREE (keyed maps NOT converted to arrays)")
@@ -350,27 +261,32 @@ for collection_name in RTDB_EXPORT:
 
 
 # --------------------------------------------------------------------------- #
-# 5. Demonstrate the FIXED pipeline (preprocessed)
+# 4. Demonstrate the FIXED pipeline (preprocessed via rtdb_bridge)
 # --------------------------------------------------------------------------- #
 print("\n#####################################################################")
 print("# PIPELINE B: PREPROCESSED RTDB TREE (keyed maps -> real arrays)")
 print("# -> Expect: proper normalized child tables + SQL DDL for each")
 print("#####################################################################\n")
 
-all_tables_schemas: Dict[str, Schema] = {}
-all_tables_results: Dict[str, List[Dict[str, Any]]] = {}
+result: ExportPipelineResult = relationalize_export(
+    RTDB_EXPORT,
+    known_collection_fields=KNOWN_COLLECTION_FIELDS,
+)
+
+all_tables_schemas: Dict[str, Schema] = result.merged_schemas()
+all_tables_results: Dict[str, List[Dict[str, Any]]] = result.merged_results()
 
 for collection_name in RTDB_EXPORT:
     print(f"\n\n################ COLLECTION: {collection_name} ################")
-    records = extract_collection_records(collection_name, RTDB_EXPORT)
+    records = extract_collection_records(
+        collection_name, RTDB_EXPORT, known_collection_fields=KNOWN_COLLECTION_FIELDS
+    )
     schemas, results = run_pipeline(collection_name, records)
-    all_tables_schemas.update(schemas)
-    all_tables_results.update(results)
     print_table_summary(schemas, results, verbose=False)
 
 
 # --------------------------------------------------------------------------- #
-# 6. Scenario assertion summary
+# 5. Scenario assertion summary
 # --------------------------------------------------------------------------- #
 print("\n\n#####################################################################")
 print("# SCENARIO ASSERTION SUMMARY")
@@ -481,5 +397,27 @@ if "devices" in all_tables:
         f"got: {dev_schema.get('revision')}",
     )
 
-print("\nALL DONE.")
+# Envelope fully validates against the canonical contract
+try:
+    from rtdb_bridge import convert_export_to_envelope
 
+    env = convert_export_to_envelope(
+        RTDB_EXPORT,
+        database_name="stress_test",
+        known_collection_fields=KNOWN_COLLECTION_FIELDS,
+        validate=True,
+    )
+    assert_scenario(
+        "envelope validates against rtdb-bridge.schema.json",
+        not env["warnings"],
+        f"got warnings: {env['warnings']}",
+    )
+    assert_scenario(
+        "envelope tree root is a database",
+        env["tree"][0]["kind"] == "database",
+        f"got: {env['tree'][0]['kind']}",
+    )
+except Exception as exc:  # pragma: no cover - unexpected pipeline failure
+    assert_scenario("envelope builds + validates", False, str(exc))
+
+print("\nALL DONE.")
