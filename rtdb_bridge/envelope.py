@@ -18,15 +18,12 @@ extension and is the single object returned by
 
 from __future__ import annotations
 
-import json
-from dataclasses import asdict
 from typing import Any, Dict, Iterable, List, Optional
 
 from relationalize import Schema
 from relationalize.sql_dialects import PostgresDialect
 
 from . import __version__
-from .preprocess import DEFAULT_KNOWN_COLLECTION_FIELDS, extract_collection_records
 from .pipeline import ExportPipelineResult, TableInfo, relationalize_export
 from .schemas import load_schema
 from .ui_tree import (
@@ -62,7 +59,10 @@ def _column_sql_type(raw_type: str) -> str:
 
 
 def _build_choice_members(
-    raw_rows: List[Dict[str, Any]], clean_schema: Schema, column: str, parts: List[str]
+    raw_rows: List[Dict[str, Any]],
+    clean_schema: Schema,
+    column: str,
+    parts: List[str],
 ) -> List[Dict[str, Any]]:
     """Build the physical member objects for a logical choice/mixed column."""
     converted = [clean_schema.convert_object(row) for row in raw_rows]
@@ -77,7 +77,7 @@ def _build_choice_members(
                 "name": phys_name,
                 "type": normalize_type_label(part),
                 "sqlType": _column_sql_type(part),
-                "nullable": any(v is None for v in values) if values else False,
+                "nullable": (any(v is None for v in values) if values else False),
                 "partial": any(phys_name not in row for row in converted),
             }
         )
@@ -105,7 +105,9 @@ def _build_database_table(
                     "uiType": "mixed",
                     "types": [normalize_type_label(p) for p in parts],
                     "sqlType": None,
-                    "nullable": any(m["nullable"] for m in members) if members else False,
+                    "nullable": (
+                        any(m["nullable"] for m in members) if members else False
+                    ),
                     "partial": any(m["partial"] for m in members) if members else False,
                     "choiceOf": members,
                 }
@@ -120,7 +122,12 @@ def _build_database_table(
                 "type": ui_type,
                 "uiType": ui_type,
                 "sqlType": _column_sql_type(raw_type),
-                "nullable": (any(v is None for v in values) or any(column not in row for row in converted)) if values else False,
+                "nullable": (
+                    any(v is None for v in values)
+                    or any(column not in row for row in converted)
+                )
+                if values
+                else False,
                 "partial": any(column not in row for row in converted),
             }
         )
@@ -291,7 +298,9 @@ def build_envelope(
         },
         "source": _build_source_info(source_name, pipeline_result),
         "database": build_database_schema(database_name, pipeline_result),
-        "tree": [build_database_tree(database_name, list(pipeline_result.tables.values()))],
+        "tree": [
+            build_database_tree(database_name, list(pipeline_result.tables.values()))
+        ],
         "sql": build_sql_contract(pipeline_result),
         "warnings": warnings,
     }
@@ -308,7 +317,7 @@ def _validate_envelope(
     """Validate the envelope against the canonical schema when possible."""
     try:
         import jsonschema
-        from jsonschema import RefResolver
+        from referencing import Registry, Resource
     except ImportError:  # pragma: no cover - optional dependency
         warnings.append(
             {
@@ -325,23 +334,41 @@ def _validate_envelope(
 
     schema = load_schema("rtdb-bridge")
 
-    # Load every sibling canonical schema so cross-file $refs resolve.
-    store = {
-        "https://dbchart.dev/contracts/database.schema.json": load_schema("database"),
-        "https://dbchart.dev/contracts/schema-tree.schema.json": load_schema("schema-tree"),
-        "https://dbchart.dev/contracts/sql.schema.json": load_schema("sql"),
-    }
-    resolver = RefResolver.from_schema(schema, store=store)
+    # Register every sibling canonical schema by its absolute $id so
+    # cross-file $refs resolve (jsonschema >= 4.18 referencing API).
+    registry = (
+        Registry()
+        .with_resource(
+            "https://dbchart.dev/contracts/database.schema.json",
+            Resource.from_contents(load_schema("database")),
+        )
+        .with_resource(
+            "https://dbchart.dev/contracts/schema-tree.schema.json",
+            Resource.from_contents(load_schema("schema-tree")),
+        )
+        .with_resource(
+            "https://dbchart.dev/contracts/sql.schema.json",
+            Resource.from_contents(load_schema("sql")),
+        )
+    )
+    validator_cls = jsonschema.validators.validator_for(schema)
+    validator_cls.check_schema(schema)
+    validator = validator_cls(schema, registry=registry)
 
-    try:
-        jsonschema.validate(envelope, schema, resolver=resolver)
-    except jsonschema.ValidationError as exc:
+    errors = sorted(validator.iter_errors(envelope), key=lambda e: list(e.absolute_path))
+    for exc in errors:
         # Best-effort: surface schema drift as a warning rather than a crash.
         warnings.append(
             {
                 "code": "schema-validation-failed",
-                "message": f"Envelope failed validation against rtdb-bridge.schema.json: {exc.message}",
-                "details": {"path": list(exc.absolute_path), "validator": exc.validator},
+                "message": (
+                    "Envelope failed validation against rtdb-bridge.schema.json: "
+                    f"{exc.message}"
+                ),
+                "details": {
+                    "path": list(exc.absolute_path),
+                    "validator": exc.validator,
+                },
             }
         )
 
@@ -405,5 +432,3 @@ __all__ = [
     "build_sql_contract",
     "convert_export_to_envelope",
 ]
-
-
