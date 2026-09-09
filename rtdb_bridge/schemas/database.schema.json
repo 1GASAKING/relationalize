@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dbchart.dev/contracts/database.schema.json",
+  "title": "DatabaseSchema",
+  "description": "Canonical canvas contract: normalized tables, columns, and relationships produced by relationalize and consumed by the dbchart extension host. Mirrors packages/schema/src/database.ts (DatabaseSchema / SchemaTable / SchemaColumn / SchemaRelationship).",
+  "version": 1,
+  "definitions": {
+    "SchemaTableType": {
+      "type": "string",
+      "enum": ["table", "view", "collection", "stream", "queue"],
+      "description": "Must stay in lock-step with SCHEMA_TABLE_TYPES in rtdb_bridge/contracts.py."
+    },
+    "SchemaColumnType": {
+      "type": "string",
+      "description": "UI type vocabulary: string | number | boolean | timestamp | ref | list | map | null | mixed. Also accepts a relationalize raw label (str/int/float/bool/none/datetime/list/map/object) for bridge-internal use."
+    },
+    "SchemaColumn": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "$ref": "#/definitions/SchemaColumnType" },
+        "sqlType": {
+          "type": ["string", "null"],
+          "description": "Dialect SQL type (e.g. BIGINT, TIMESTAMP, VARCHAR(65535), BOOLEAN, FLOAT). Null on logical mixed columns - see choiceOf for physical member types."
+        },
+        "nullable": { "type": "boolean" },
+        "partial": { "type": "boolean" },
+        "uiType": { "$ref": "#/definitions/SchemaColumnType" },
+        "typeSummary": { "type": "string" },
+        "types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Choices for a mixed column: original language types detected (e.g. [\"number\", \"string\"])."
+        },
+        "sample": {
+          "type": "array",
+          "items": {},
+          "description": "Up to N distinct human-readable sample values for this column."
+        },
+        "refTable": {
+          "type": "string",
+          "description": "Present only when column is a relation id (1:N child table name)."
+        },
+        "cardinality": {
+          "type": "string",
+          "enum": ["1:1", "1:N", "N:1", "N:N"]
+        },
+        "choiceOf": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SchemaColumn" },
+          "description": "Physical member columns backing a logical mixed column (e.g. age_int / age_str with their concrete SQL types)."
+        }
+      },
+      "required": ["name", "type"]
+    },
+    "SchemaTable": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "$ref": "#/definitions/SchemaTableType" },
+        "sourceCollection": {
+          "type": ["string", "null"],
+          "description": "Original RTDB top-level collection this table was derived from, or null when unknown."
+        },
+        "rowCount": { "type": "integer", "minimum": 0 },
+        "columnCount": { "type": "integer", "minimum": 0 },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SchemaColumn" }
+        },
+        "primaryKey": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Column name(s) forming the primary key (usually [\"record_id\"])."
+        },
+        "indexes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "name": { "type": "string" },
+              "columns": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "unique": { "type": "boolean" }
+            },
+            "required": ["name", "columns"]
+          }
+        },
+        "foreignKeys": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "name": { "type": "string" },
+              "column": { "type": "string" },
+              "refTable": { "type": "string" },
+              "refColumn": { "type": "string" },
+              "cardinality": {
+                "type": "string",
+                "enum": ["1:1", "1:N", "N:1", "N:N"]
+              }
+            },
+            "required": ["column", "refTable"]
+          }
+        }
+      },
+      "required": ["name", "columns"]
+    }
+  },
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "name": { "type": "string", "description": "Database / project display name." },
+    "tables": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SchemaTable" }
+    }
+  },
+  "required": ["name", "tables"]
+}
+
+
+

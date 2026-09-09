@@ -20,6 +20,21 @@ keywords = [
   "array"
 ]
 
+dependencies = []
+
+[project.optional-dependencies]
+contracts = ["jsonschema>=3.2.0"]
+
+[project.urls]
+Homepage = "https://github.com/tulip/relationalize"
+
+[tool.setuptools]
+packages = ["relationalize", "rtdb_bridge", "rtdb_bridge.schemas"]
+
+[tool.setuptools.package-data]
+relationalize = ["py.typed"]
+rtdb_bridge = ["schemas/*.json"]
+
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"

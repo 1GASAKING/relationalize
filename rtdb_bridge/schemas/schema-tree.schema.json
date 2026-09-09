@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dbchart.dev/contracts/schema-tree.schema.json",
+  "title": "SchemaTreeNode",
+  "description": "Canonical explorer-contract: a recursive 4-key UI tree forest consumed by any tree renderer. Mirrors packages/schema/src/tree/tree-node.ts (SchemaTreeNode) and tree-node-meta.ts (kind icons/labels).",
+  "version": 1,
+  "definitions": {
+    "SchemaNodeKind": {
+      "type": "string",
+      "enum": [
+        "connection",
+        "database",
+        "section",
+        "table",
+        "view",
+        "collection",
+        "row",
+        "schema",
+        "column",
+        "index",
+        "foreignKey",
+        "uniqueConstraint",
+        "trigger",
+        "type",
+        "note",
+        "columns",
+        "keys",
+        "key",
+        "references",
+        "reference",
+        "types"
+      ],
+      "description": "Must stay in lock-step with SCHEMA_NODE_KINDS in rtdb_bridge/contracts.py, PLUS the composite container kinds emitted by the UI tree layer (columns/keys/references/types) and their children (key/reference)."
+    },
+    "SchemaNodeOrigin": {
+      "type": "string",
+      "enum": ["static", "metadata", "user"]
+    },
+    "SchemaTreeNodeMeta": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "title": { "type": "string" },
+        "icon": { "type": "string", "description": "Codicon name without the codicon- prefix (e.g. table, link, symbol-field)." },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "origin": { "$ref": "#/definitions/SchemaNodeOrigin" },
+        "rowCount": { "type": "integer", "minimum": 0 },
+        "tableCount": { "type": "integer", "minimum": 0 },
+        "column": { "type": "string" },
+        "value": {},
+        "count": { "type": "integer", "minimum": 0 },
+        "empty": { "type": "boolean" },
+        "uiType": { "type": "string" },
+        "typeSummary": { "type": "string" },
+        "types": { "type": "array", "items": { "type": "string" } },
+        "summary": { "type": "string" },
+        "nullable": { "type": "boolean" },
+        "partial": { "type": "boolean" },
+        "sample": { "type": "array", "items": {} },
+        "refTable": { "type": "string" },
+        "cardinality": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "ddl": { "type": "string" }
+      }
+    },
+    "SchemaTreeNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "$ref": "#/definitions/SchemaNodeKind" },
+        "name": { "type": "string" },
+        "meta": { "$ref": "#/definitions/SchemaTreeNodeMeta" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SchemaTreeNode" }
+        }
+      },
+      "required": ["kind", "name"]
+    }
+  },
+  "type": "array",
+  "items": { "$ref": "#/definitions/SchemaTreeNode" },
+  "description": "A forest of SchemaTreeNode roots. When a single-database bridge emits a tree, the array holds one root node with kind=database."
+}

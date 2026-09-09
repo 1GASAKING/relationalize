@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dbchart.dev/contracts/rtdb-bridge.schema.json",
+  "title": "RtdbBridgeEnvelope",
+  "description": "The canonical Python -> TS envelope. A complete bridge output MUST validate against this file before being emitted to the dbchart extension host.",
+  "version": 1,
+  "definitions": {
+    "GeneratorInfo": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string", "const": "rtdb-bridge" },
+        "version": { "type": "string", "description": "rtdb_bridge package version (__version__)." },
+        "pipelineVersion": { "type": "integer", "description": "Schema pipeline version. Mirrors rtdb_bridge.file_version." }
+      },
+      "required": ["name", "version"]
+    },
+    "SourceInfo": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "format": { "type": "string", "enum": ["rtdb-export-json", "firebase-rtdb-json", "generic-json"] },
+        "name": { "type": "string", "description": "Original database/export name when known." },
+        "recordCount": { "type": "integer", "minimum": 0 },
+        "collectionCount": { "type": "integer", "minimum": 0 },
+        "exportedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Warning": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "collection": { "type": "string" },
+        "recordId": { "type": "string" },
+        "field": { "type": "string" },
+        "details": { "type": "object" }
+      },
+      "required": ["code", "message"]
+    }
+  },
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "envelopeVersion": { "type": "integer", "const": 1 },
+    "generator": { "$ref": "#/definitions/GeneratorInfo" },
+    "source": { "$ref": "#/definitions/SourceInfo" },
+    "database": { "$ref": "https://dbchart.dev/contracts/database.schema.json" },
+    "tree": { "$ref": "https://dbchart.dev/contracts/schema-tree.schema.json" },
+    "sql": { "$ref": "https://dbchart.dev/contracts/sql.schema.json" },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Warning" }
+    }
+  },
+  "required": ["envelopeVersion", "generator", "database", "tree", "sql", "warnings"]
+}
+

@@ -1,0 +1,578 @@
+{
+  "kind": "database",
+  "name": "demo",
+  "meta": {
+    "tableCount": 4
+  },
+  "children": [
+    {
+      "kind": "table",
+      "name": "chat_rooms",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"chat_rooms\" (\n    \"identifier\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n    , \"title\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "identifier",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "room_alpha",
+                  "room_beta"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "room_alpha",
+                  "room_beta"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "title",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "Lounge",
+                  "Gaming"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 2,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "room_alpha",
+              "meta": {
+                "column": "record_id",
+                "value": "room_alpha"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "room_beta",
+              "meta": {
+                "column": "record_id",
+                "value": "room_beta"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string",
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "messages",
+      "meta": {
+        "rowCount": 1,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"messages\" (\n    \"chat_room\" VARCHAR(65535)\n    , \"identifier\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n    , \"text\" VARCHAR(65535)\n    , \"user\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "chat_room",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "room_alpha"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "identifier",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "msg_001"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "msg_001"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "text",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "Hello"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "user",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u_01"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 1,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "msg_001",
+              "meta": {
+                "column": "record_id",
+                "value": "msg_001"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string",
+            "count": 1
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users\" (\n    \"active\" BOOLEAN\n    , \"age_int\" BIGINT\n    , \"age_str\" VARCHAR(65535)\n    , \"bio\" VARCHAR(65535)\n    , \"identifier\" VARCHAR(65535)\n    , \"name\" VARCHAR(65535)\n    , \"prefs_notifications\" BOOLEAN\n    , \"prefs_theme\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n    , \"tags\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "active",
+              "meta": {
+                "uiType": "boolean",
+                "typeSummary": "boolean",
+                "types": [
+                  "boolean"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  true
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "age",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "number \u00b7 string",
+                "types": [
+                  "number",
+                  "string"
+                ],
+                "sample": [
+                  30,
+                  "unknown"
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "age_int",
+                  "meta": {
+                    "uiType": "number",
+                    "typeSummary": "number",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      30
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "age_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "unknown"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "bio",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "hello"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "identifier",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u_01",
+                  "u_02"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "name",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "Alice",
+                  "Bob"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "prefs_notifications",
+              "meta": {
+                "uiType": "boolean",
+                "typeSummary": "boolean",
+                "types": [
+                  "boolean"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  true
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "prefs_theme",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "dark"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u_01",
+                  "u_02"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_tags",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_150dc2f812354a76969ba74adc7c785d"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 2,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "u_01",
+              "meta": {
+                "column": "record_id",
+                "value": "u_01"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u_02",
+              "meta": {
+                "column": "record_id",
+                "value": "u_02"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 1
+          },
+          "children": [
+            {
+              "kind": "reference",
+              "name": "users.tags -> users_tags",
+              "meta": {
+                "from": "users.tags",
+                "to": "users_tags",
+                "count": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string \u00b7 number \u00b7 boolean \u00b7 ref \u00b7 mixed",
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_tags",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_tags\" (\n    \"tags__index_\" BIGINT\n    , \"tags__rid_\" VARCHAR(65535)\n    , \"tags__val_\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "tags__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags__val_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "gamer",
+                  "moderator"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string \u00b7 number",
+            "count": 2
+          }
+        }
+      ]
+    }
+  ]
+}
