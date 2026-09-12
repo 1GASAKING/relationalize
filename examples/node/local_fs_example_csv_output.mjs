@@ -1,0 +1,83 @@
+/**
+ * Local file system + CSV output example.
+ * Node port of `examples/local_fs_example_csv_output.py`.
+ *
+ * Writes:
+ *   examples/output/node/local_fs_example_csv/temp/<table>.json
+ *   examples/output/node/local_fs_example_csv/final/<table>.csv
+ *   examples/output/node/local_fs_example_csv/final/DDL_<table>.sql
+ *
+ * Run from the repository root:
+ *   npm --prefix node run build
+ *   node examples/node/local_fs_example_csv_output.mjs
+ */
+import { readdirSync } from 'node:fs';
+import { join, resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { Relationalize, Schema, createLocalFile } from '../../node/dist/src/index.js';
+
+import {
+  DictWriter,
+  ensureDir,
+  exampleDir,
+  readNdjson,
+  readNdjsonIterator,
+  writeLocalText,
+} from './lib/pipeline.mjs';
+
+const here = dirname(fileURLToPath(import.meta.url));
+
+const BASE_DIR = exampleDir('local_fs_example_csv');
+const TEMP_OUTPUT_DIR = join(BASE_DIR, 'temp');
+const FINAL_OUTPUT_DIR = join(BASE_DIR, 'final');
+const INPUT_DIR = resolve(here, '..', 'example_data');
+
+const INPUT_FILENAME = 'mock_lms_data.json';
+const OBJECT_NAME = 'users';
+
+// 0. Set up file system
+ensureDir(TEMP_OUTPUT_DIR);
+ensureDir(FINAL_OUTPUT_DIR);
+
+const EXPORT_PATH = join(INPUT_DIR, INPUT_FILENAME);
+
+// 1. Relationalize raw data
+const r = new Relationalize(OBJECT_NAME, createLocalFile(TEMP_OUTPUT_DIR));
+r.relationalize(readNdjsonIterator(EXPORT_PATH));
+r.closeIo();
+
+// 2. Generate schemas for each transformed/flattened file
+const schemas = {};
+for (const filename of readdirSync(TEMP_OUTPUT_DIR)) {
+  const objectName = filename.replace(/\.json$/, '');
+  schemas[objectName] = new Schema();
+  for (const obj of readNdjsonIterator(join(TEMP_OUTPUT_DIR, filename))) {
+    schemas[objectName].readObject(obj);
+  }
+}
+
+// 3. Convert transformed/flattened data to prep for the database.
+//    Emit CSV + SQL DDL.
+for (const filename of readdirSync(TEMP_OUTPUT_DIR)) {
+  const objectName = filename.replace(/\.json$/, '');
+  const writer = new DictWriter(schemas[objectName].generateOutputColumns());
+  const convertedRows = readNdjson(join(TEMP_OUTPUT_DIR, filename)).map((obj) =>
+    schemas[objectName].convertObject(obj),
+  );
+
+  writeLocalText(
+    join(FINAL_OUTPUT_DIR, `${objectName}.csv`),
+    writer.write(convertedRows),
+  );
+  writeLocalText(
+    join(FINAL_OUTPUT_DIR, `DDL_${objectName}.sql`),
+    schemas[objectName].generateDdl(objectName, 'public'),
+  );
+}
+
+console.log('-'.repeat(20));
+console.log(`Wrote ${Object.keys(schemas).length} tables to ${FINAL_OUTPUT_DIR}`);
+for (const objectName of Object.keys(schemas).sort()) {
+  console.log(`  - ${objectName}.csv + DDL_${objectName}.sql`);
+}

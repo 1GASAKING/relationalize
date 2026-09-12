@@ -1,0 +1,34 @@
+{
+  "users": {
+    "u1": {
+      "name": "Alice",
+      "age": 30,
+      "active": true,
+      "score": 1.5,
+      "prefs": { "theme": "dark", "notifications": true },
+      "tags": ["admin", "mod"],
+      "orders": {
+        "-o1": { "order_id": "ORD-1", "items": ["a", "b"] }
+      },
+      "friends": { "f1": true, "f2": true }
+    },
+    "u2": {
+      "name": "Bob",
+      "age": "thirty",
+      "prefs": { "theme": "light" },
+      "tags": ["guest"],
+      "bio": null
+    },
+    "u3": {
+      "name": "Carol",
+      "age": 41,
+      "prefs": {},
+      "connections": [["x"], ["y", "z"]]
+    }
+  },
+  "chat": {
+    "m1": { "text": "hi", "user": "u1", "ts": 1671135896468 },
+    "m2": { "text": "yo", "user": "u2" }
+  },
+  "meta_version": 3
+}

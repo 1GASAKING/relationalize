@@ -1,0 +1,276 @@
+
+#####################################################################
+# PIPELINE A: RAW RTDB TREE (keyed maps NOT converted to arrays)
+# -> Expect: orders/account_settings/preferences flatten into
+#    ugly/polluted columns
+#    Because Relationalize only splits REAL arrays into child tables.
+#####################################################################
+
+
+Collection: users
+Tables produced: ["users","users_friends","users_matrix","users_matrix__val_","users_tags"]
+  e.g. polluted columns: ["orders_-o1_order_id","orders_-o1_items_-i1_sku","orders_-o1_items_-i1_qty","orders_-o1_items_-i2_sku","orders_-o1_items_-i2_qty"]
+  total columns on first row: 17
+  NOTE: instead of proper child tables, keyed data is jammed into wide, key-dependent columns.
+
+Collection: accounts
+Tables produced: ["accounts"]
+  e.g. polluted columns: ["account_settings_-s1_name","account_settings_-s1_value","account_settings_-s2_name","account_settings_-s2_value","preferences_-p1_key","preferences_-p1_enabled","preferences_-p2_key","preferences_-p2_enabled"]
+  total columns on first row: 11
+  NOTE: instead of proper child tables, keyed data is jammed into wide, key-dependent columns.
+
+Collection: devices
+Tables produced: ["devices"]
+  e.g. polluted columns: []
+  total columns on first row: 4
+  NOTE: instead of proper child tables, keyed data is jammed into wide, key-dependent columns.
+
+#####################################################################
+# PIPELINE B: PREPROCESSED RTDB TREE (keyed maps -> real arrays)
+# -> Expect: proper normalized child tables + SQL DDL for each
+#####################################################################
+
+
+
+################ COLLECTION: users ################
+  (dropped 1 null-only column(s) from users)
+========================================================================
+TABLE: users  (8 rows)
+SCHEMA: {"GH_I_":"str","address_city":"str","address_geo_lat":"float","address_geo_lng":"int","age":"c-int-str","contact email":"str","enrolled_courses":"str","followers":"str","friends":"str","height":"int","matrix":"str","name":"str","nickname":"str","orders":"str","phone-number":"str","record_id":"str","score":"c-float-int-str","settings":"str","settings_color":"str","settings_notifications":"bool","source_record_id":"str","status":"str","tags":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users" (
+    "GH_I_" VARCHAR(65535)
+    , "address_city" VARCHAR(65535)
+    , "address_geo_lat" FLOAT
+    , "address_geo_lng" BIGINT
+    , "age_int" BIGINT
+    , "age_str" VARCHAR(65535)
+    , "contact email" VARCHAR(65535)
+    , "enrolled_courses" VARCHAR(65535)
+    , "followers" VARCHAR(65535)
+    , "friends" VARCHAR(65535)
+    , "height" BIGINT
+    , "matrix" VARCHAR(65535)
+    , "name" VARCHAR(65535)
+    , "nickname" VARCHAR(65535)
+    , "orders" VARCHAR(65535)
+    , "phone-number" VARCHAR(65535)
+    , "record_id" VARCHAR(65535)
+    , "score_float" FLOAT
+    , "score_int" BIGINT
+    , "score_str" VARCHAR(65535)
+    , "settings" VARCHAR(65535)
+    , "settings_color" VARCHAR(65535)
+    , "settings_notifications" BOOLEAN
+    , "source_record_id" VARCHAR(65535)
+    , "status" VARCHAR(65535)
+    , "tags" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"address_city":"NYC","address_geo_lat":40.7,"address_geo_lng":-74,"age_int":30,"email":null,"friends":"R_888ab9b83d204eecaf44e9dc7be79740","matrix":"R_0c0f646703524e0581956016d2e44342","name":"Alice","orders":"R_4ba70aecda0d4992a40432956d7c4f60","record_id":"u1","settings_color":"red","settings_notifications":true,"tags":"R_0db9e39cc6c1464ea6361c649252518e"}
+    {"age_str":"thirty","height":180,"name":"Bob","orders":"R_db95aa5b3c0a461fb4c6851610279ee1","record_id":"u2","settings":"dark"}
+    ... (6 more rows)
+========================================================================
+TABLE: users_enrolled_courses  (3 rows)
+SCHEMA: {"enrolled_courses__index_":"int","enrolled_courses__rid_":"str","enrolled_courses_grade":"str","enrolled_courses_record_id":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_enrolled_courses" (
+    "enrolled_courses__index_" BIGINT
+    , "enrolled_courses__rid_" VARCHAR(65535)
+    , "enrolled_courses_grade" VARCHAR(65535)
+    , "enrolled_courses_record_id" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"enrolled_courses__index_":0,"enrolled_courses__rid_":"R_e696c983aaa546b8b945a21b4696f4f4","enrolled_courses_grade":"A","enrolled_courses_record_id":"CS101"}
+    {"enrolled_courses__index_":1,"enrolled_courses__rid_":"R_e696c983aaa546b8b945a21b4696f4f4","enrolled_courses_grade":"B","enrolled_courses_record_id":"MATH200"}
+    ... (1 more rows)
+========================================================================
+TABLE: users_followers  (2 rows)
+SCHEMA: {"followers__index_":"int","followers__rid_":"str","followers_record_id":"str","followers_value":"bool"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_followers" (
+    "followers__index_" BIGINT
+    , "followers__rid_" VARCHAR(65535)
+    , "followers_record_id" VARCHAR(65535)
+    , "followers_value" BOOLEAN
+);
+SAMPLE (converted rows):
+    {"followers__index_":0,"followers__rid_":"R_83edfe5034204ab086b1a34ade72342a","followers_record_id":"u1","followers_value":true}
+    {"followers__index_":1,"followers__rid_":"R_83edfe5034204ab086b1a34ade72342a","followers_record_id":"u5","followers_value":true}
+========================================================================
+TABLE: users_friends  (2 rows)
+SCHEMA: {"friends__index_":"int","friends__rid_":"str","friends_id":"str","friends_since":"int"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_friends" (
+    "friends__index_" BIGINT
+    , "friends__rid_" VARCHAR(65535)
+    , "friends_id" VARCHAR(65535)
+    , "friends_since" BIGINT
+);
+SAMPLE (converted rows):
+    {"friends__index_":0,"friends__rid_":"R_888ab9b83d204eecaf44e9dc7be79740","friends_id":"u2","friends_since":2020}
+    {"friends__index_":1,"friends__rid_":"R_888ab9b83d204eecaf44e9dc7be79740","friends_id":"u3","friends_since":2021}
+========================================================================
+TABLE: users_matrix  (2 rows)
+SCHEMA: {"matrix__index_":"int","matrix__rid_":"str","matrix__val_":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_matrix" (
+    "matrix__index_" BIGINT
+    , "matrix__rid_" VARCHAR(65535)
+    , "matrix__val_" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"matrix__index_":0,"matrix__rid_":"R_0c0f646703524e0581956016d2e44342","matrix__val_":"R_9cf2e3433cc3428f82ee80e1ec46cd67"}
+    {"matrix__index_":1,"matrix__rid_":"R_0c0f646703524e0581956016d2e44342","matrix__val_":"R_29680e956ccb4d06a220c0cc15269902"}
+========================================================================
+TABLE: users_matrix__val_  (4 rows)
+SCHEMA: {"matrix__val___index_":"int","matrix__val___rid_":"str","matrix__val___val_":"int"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_matrix__val_" (
+    "matrix__val___index_" BIGINT
+    , "matrix__val___rid_" VARCHAR(65535)
+    , "matrix__val___val_" BIGINT
+);
+SAMPLE (converted rows):
+    {"matrix__val___index_":0,"matrix__val___rid_":"R_9cf2e3433cc3428f82ee80e1ec46cd67","matrix__val___val_":1}
+    {"matrix__val___index_":1,"matrix__val___rid_":"R_9cf2e3433cc3428f82ee80e1ec46cd67","matrix__val___val_":2}
+    ... (2 more rows)
+========================================================================
+TABLE: users_orders  (1 rows)
+SCHEMA: {"orders__index_":"int","orders__rid_":"str","orders_items":"str","orders_order_id":"str","orders_record_id":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_orders" (
+    "orders__index_" BIGINT
+    , "orders__rid_" VARCHAR(65535)
+    , "orders_items" VARCHAR(65535)
+    , "orders_order_id" VARCHAR(65535)
+    , "orders_record_id" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"orders__index_":0,"orders__rid_":"R_4ba70aecda0d4992a40432956d7c4f60","orders_items":"R_46fea8eaaa524f54869cccc42c0c5156","orders_order_id":"ORD-1","orders_record_id":"-o1"}
+========================================================================
+TABLE: users_orders_items  (2 rows)
+SCHEMA: {"orders_items__index_":"int","orders_items__rid_":"str","orders_items_qty":"int","orders_items_record_id":"str","orders_items_sku":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_orders_items" (
+    "orders_items__index_" BIGINT
+    , "orders_items__rid_" VARCHAR(65535)
+    , "orders_items_qty" BIGINT
+    , "orders_items_record_id" VARCHAR(65535)
+    , "orders_items_sku" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"orders_items__index_":0,"orders_items__rid_":"R_46fea8eaaa524f54869cccc42c0c5156","orders_items_qty":1,"orders_items_record_id":"-i1","orders_items_sku":"BOOK-1"}
+    {"orders_items__index_":1,"orders_items__rid_":"R_46fea8eaaa524f54869cccc42c0c5156","orders_items_qty":3,"orders_items_record_id":"-i2","orders_items_sku":"PEN-2"}
+========================================================================
+TABLE: users_tags  (2 rows)
+SCHEMA: {"tags__index_":"int","tags__rid_":"str","tags__val_":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."users_tags" (
+    "tags__index_" BIGINT
+    , "tags__rid_" VARCHAR(65535)
+    , "tags__val_" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"tags__index_":0,"tags__rid_":"R_0db9e39cc6c1464ea6361c649252518e","tags__val_":"red"}
+    {"tags__index_":1,"tags__rid_":"R_0db9e39cc6c1464ea6361c649252518e","tags__val_":"blue"}
+========================================================================
+
+
+################ COLLECTION: accounts ################
+========================================================================
+TABLE: accounts  (3 rows)
+SCHEMA: {"account_settings":"str","active":"bool","owner":"str","preferences":"str","record_id":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."accounts" (
+    "account_settings" VARCHAR(65535)
+    , "active" BOOLEAN
+    , "owner" VARCHAR(65535)
+    , "preferences" VARCHAR(65535)
+    , "record_id" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"account_settings":"R_b6fc7ed77922438ca873e96ffe8638dc","active":true,"owner":"Alice","preferences":"R_1e884f43be5947909654a5d68b0e4ef0","record_id":"acc_1"}
+    {"account_settings":"R_199da7d7d3214bfa8788f2c779913fb9","active":false,"owner":"Bob","preferences":"R_4bd9a5de9a77474bbc168cb613a96c7d","record_id":"acc_2"}
+    ... (1 more rows)
+========================================================================
+TABLE: accounts_account_settings  (4 rows)
+SCHEMA: {"account_settings__index_":"int","account_settings__rid_":"str","account_settings_name":"str","account_settings_record_id":"str","account_settings_value":"c-bool-str","account_settings_value_font_size":"int","account_settings_value_mode":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."accounts_account_settings" (
+    "account_settings__index_" BIGINT
+    , "account_settings__rid_" VARCHAR(65535)
+    , "account_settings_name" VARCHAR(65535)
+    , "account_settings_record_id" VARCHAR(65535)
+    , "account_settings_value_bool" BOOLEAN
+    , "account_settings_value_font_size" BIGINT
+    , "account_settings_value_mode" VARCHAR(65535)
+    , "account_settings_value_str" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"account_settings__index_":0,"account_settings__rid_":"R_b6fc7ed77922438ca873e96ffe8638dc","account_settings_name":"theme","account_settings_record_id":"-s1","account_settings_value_str":"dark"}
+    {"account_settings__index_":1,"account_settings__rid_":"R_b6fc7ed77922438ca873e96ffe8638dc","account_settings_name":"language","account_settings_record_id":"-s2","account_settings_value_str":"en"}
+    ... (2 more rows)
+========================================================================
+TABLE: accounts_preferences  (3 rows)
+SCHEMA: {"preferences__index_":"int","preferences__rid_":"str","preferences_enabled":"c-bool-str","preferences_key":"str","preferences_record_id":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."accounts_preferences" (
+    "preferences__index_" BIGINT
+    , "preferences__rid_" VARCHAR(65535)
+    , "preferences_enabled_bool" BOOLEAN
+    , "preferences_enabled_str" VARCHAR(65535)
+    , "preferences_key" VARCHAR(65535)
+    , "preferences_record_id" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"preferences__index_":0,"preferences__rid_":"R_1e884f43be5947909654a5d68b0e4ef0","preferences_enabled_bool":true,"preferences_key":"newsletter","preferences_record_id":"-p1"}
+    {"preferences__index_":1,"preferences__rid_":"R_1e884f43be5947909654a5d68b0e4ef0","preferences_enabled_bool":false,"preferences_key":"weekly_digest","preferences_record_id":"-p2"}
+    ... (1 more rows)
+========================================================================
+
+
+################ COLLECTION: devices ################
+========================================================================
+TABLE: devices  (3 rows)
+SCHEMA: {"owner_ref":"str","record_id":"str","revision":"c-int-str","serial":"str"}
+DDL:
+CREATE TABLE IF NOT EXISTS "public"."devices" (
+    "owner_ref" VARCHAR(65535)
+    , "record_id" VARCHAR(65535)
+    , "revision_int" BIGINT
+    , "revision_str" VARCHAR(65535)
+    , "serial" VARCHAR(65535)
+);
+SAMPLE (converted rows):
+    {"owner_ref":"u1","record_id":"dev_1","revision_int":3,"serial":"DEV-ABC-0001"}
+    {"owner_ref":"u4","record_id":"dev_2","revision_str":"v2","serial":"DEV-XYZ-0002"}
+    ... (1 more rows)
+========================================================================
+
+
+#####################################################################
+# SCENARIO ASSERTION SUMMARY
+#####################################################################
+
+  [PASS] nested keyed map (orders) split into child table
+  [PASS] nested order items split from parent child
+  [PASS] settings collection split
+  [PASS] preferences collection split
+  [PASS] primitive keyed map (followers) split
+  [PASS] follower rows have keys preserved
+  [PASS] business keyed map (enrolled_courses) split
+  [PASS] business keys (CS101 etc.) preserved
+  [PASS] deep object (address.geo) flattened
+  [PASS] choice column (age int/str) present
+  [PASS] 2-way choice (enabled bool/str)
+  [PASS] 3-way choice (score int/float/str)
+  [PASS] field names w/ spaces & hyphens survived
+  [PASS] record_id collision preserves source payload id
+  [PASS] null-only column (email) was dropped from DDL
+  [PASS] empty preferences collection did not invent junk
+  [PASS] device choice column revision (int/str)
+  [PASS] envelope validates against rtdb-bridge.schema.json
+  [PASS] envelope tree root is a database
+
+19/19 scenarios passed, 0 failed.

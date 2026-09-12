@@ -1,0 +1,2095 @@
+{
+  "kind": "database",
+  "name": "stress_test",
+  "meta": {
+    "tableCount": 13
+  },
+  "children": [
+    {
+      "kind": "table",
+      "name": "accounts",
+      "meta": {
+        "rowCount": 3,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"accounts\" (\n    \"account_settings\" VARCHAR(65535)\n    , \"active\" BOOLEAN\n    , \"owner\" VARCHAR(65535)\n    , \"preferences\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "account_settings",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "accounts_account_settings",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_73cdd57e3127414a8552f91c8cf9dd20",
+                  "R_8aa9998c1474413887c5f20edbd179c3",
+                  "R_aef927da23554c348e8928ff99cbced9"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "active",
+              "meta": {
+                "uiType": "boolean",
+                "typeSummary": "boolean",
+                "types": [
+                  "boolean"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  true,
+                  false
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "owner",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "Alice",
+                  "Bob",
+                  "Cara"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "preferences",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "accounts_preferences",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_c782c40f1a5d4a85a4b92714770a97f6",
+                  "R_21cde49389aa46e6a371c8c80c38db78",
+                  "R_a8c45f24dca044cd92eedc683dd2d4e1"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "acc_1",
+                  "acc_2",
+                  "acc_3"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 3,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "acc_1",
+              "meta": {
+                "column": "record_id",
+                "value": "acc_1"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "acc_2",
+              "meta": {
+                "column": "record_id",
+                "value": "acc_2"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "acc_3",
+              "meta": {
+                "column": "record_id",
+                "value": "acc_3"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 2
+          },
+          "children": [
+            {
+              "kind": "reference",
+              "name": "accounts.account_settings -> accounts_account_settings",
+              "meta": {
+                "from": "accounts.account_settings",
+                "to": "accounts_account_settings",
+                "count": 3
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "accounts.preferences -> accounts_preferences",
+              "meta": {
+                "from": "accounts.preferences",
+                "to": "accounts_preferences",
+                "count": 3
+              }
+            }
+          ]
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · boolean · ref",
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "accounts_account_settings",
+      "meta": {
+        "rowCount": 4,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"accounts_account_settings\" (\n    \"account_settings__index_\" BIGINT\n    , \"account_settings__rid_\" VARCHAR(65535)\n    , \"account_settings_name\" VARCHAR(65535)\n    , \"account_settings_record_id\" VARCHAR(65535)\n    , \"account_settings_value_bool\" BOOLEAN\n    , \"account_settings_value_font_size\" BIGINT\n    , \"account_settings_value_mode\" VARCHAR(65535)\n    , \"account_settings_value_str\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "account_settings__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "account_settings__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "account_settings_name",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "theme",
+                  "language",
+                  "auto_play"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "account_settings_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "-s1",
+                  "-s2",
+                  "-s3"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "account_settings_value",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "boolean · string",
+                "types": [
+                  "boolean",
+                  "string"
+                ],
+                "sample": [
+                  "dark",
+                  "en",
+                  true
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "account_settings_value_bool",
+                  "meta": {
+                    "uiType": "boolean",
+                    "typeSummary": "boolean",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      true
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "account_settings_value_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "dark",
+                      "en"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "account_settings_value_font_size",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  14
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "account_settings_value_mode",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "light"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number · boolean · mixed",
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "accounts_preferences",
+      "meta": {
+        "rowCount": 3,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"accounts_preferences\" (\n    \"preferences__index_\" BIGINT\n    , \"preferences__rid_\" VARCHAR(65535)\n    , \"preferences_enabled_bool\" BOOLEAN\n    , \"preferences_enabled_str\" VARCHAR(65535)\n    , \"preferences_key\" VARCHAR(65535)\n    , \"preferences_record_id\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "preferences__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "preferences__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "preferences_enabled",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "boolean · string",
+                "types": [
+                  "boolean",
+                  "string"
+                ],
+                "sample": [
+                  true,
+                  false,
+                  "yes"
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "preferences_enabled_bool",
+                  "meta": {
+                    "uiType": "boolean",
+                    "typeSummary": "boolean",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      true,
+                      false
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "preferences_enabled_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "yes"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "preferences_key",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "newsletter",
+                  "weekly_digest",
+                  "digest"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "preferences_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "-p1",
+                  "-p2"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number · boolean · mixed",
+            "count": 4
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "devices",
+      "meta": {
+        "rowCount": 3,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"devices\" (\n    \"owner_ref\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n    , \"revision_int\" BIGINT\n    , \"revision_str\" VARCHAR(65535)\n    , \"serial\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "owner_ref",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u1",
+                  "u4",
+                  "u8"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "dev_1",
+                  "dev_2",
+                  "dev_3"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "revision",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "number · string",
+                "types": [
+                  "number",
+                  "string"
+                ],
+                "sample": [
+                  3,
+                  "v2"
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "revision_int",
+                  "meta": {
+                    "uiType": "number",
+                    "typeSummary": "number",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      3
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "revision_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "v2"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "serial",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": false,
+                "sample": [
+                  "DEV-ABC-0001",
+                  "DEV-XYZ-0002"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 3,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "dev_1",
+              "meta": {
+                "column": "record_id",
+                "value": "dev_1"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "dev_2",
+              "meta": {
+                "column": "record_id",
+                "value": "dev_2"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "dev_3",
+              "meta": {
+                "column": "record_id",
+                "value": "dev_3"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number · mixed",
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users",
+      "meta": {
+        "rowCount": 8,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users\" (\n    \"GH_I_\" VARCHAR(65535)\n    , \"address_city\" VARCHAR(65535)\n    , \"address_geo_lat\" FLOAT\n    , \"address_geo_lng\" BIGINT\n    , \"age_int\" BIGINT\n    , \"age_str\" VARCHAR(65535)\n    , \"contact email\" VARCHAR(65535)\n    , \"enrolled_courses\" VARCHAR(65535)\n    , \"followers\" VARCHAR(65535)\n    , \"friends\" VARCHAR(65535)\n    , \"height\" BIGINT\n    , \"matrix\" VARCHAR(65535)\n    , \"name\" VARCHAR(65535)\n    , \"nickname\" VARCHAR(65535)\n    , \"orders\" VARCHAR(65535)\n    , \"phone-number\" VARCHAR(65535)\n    , \"record_id\" VARCHAR(65535)\n    , \"score_float\" FLOAT\n    , \"score_int\" BIGINT\n    , \"score_str\" VARCHAR(65535)\n    , \"settings\" VARCHAR(65535)\n    , \"settings_color\" VARCHAR(65535)\n    , \"settings_notifications\" BOOLEAN\n    , \"source_record_id\" VARCHAR(65535)\n    , \"status\" VARCHAR(65535)\n    , \"tags\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "GH_I_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "underscore-key"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "address_city",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "NYC"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "address_geo_lat",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  40.7
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "address_geo_lng",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  -74
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "age",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "number · string",
+                "types": [
+                  "number",
+                  "string"
+                ],
+                "sample": [
+                  30,
+                  "thirty"
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "age_int",
+                  "meta": {
+                    "uiType": "number",
+                    "typeSummary": "number",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      30
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "age_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "thirty"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "contact email",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "cara@cc.com"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "enrolled_courses",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_enrolled_courses",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_47450dfd88c54beea644ceef1d747a14"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "followers",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_followers",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_29425791e5434097a57062b604a5db50"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "friends",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_friends",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_b598d2e4d7e646cfa12689b70047c984"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "height",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  180
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "matrix",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_matrix",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_2c63f6773b024bdeb11f93384dc56e9f"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "name",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "Alice",
+                  "Bob",
+                  "Cara",
+                  "Devon"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "nickname",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "CC"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_orders",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_2ed395e840b44c8fb7e88f2986c5bf9f",
+                  "R_10cb5eefbeb9482c91fde6d89eac0736"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "phone-number",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "+123456"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u1",
+                  "u2",
+                  "u3",
+                  "u4"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "score",
+              "meta": {
+                "uiType": "mixed",
+                "typeSummary": "number · number · string",
+                "types": [
+                  "number",
+                  "number",
+                  "string"
+                ],
+                "sample": [
+                  8.5,
+                  7,
+                  "high"
+                ],
+                "nullable": true,
+                "partial": true
+              },
+              "children": [
+                {
+                  "kind": "column",
+                  "name": "score_float",
+                  "meta": {
+                    "uiType": "number",
+                    "typeSummary": "number",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      8.5
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "score_int",
+                  "meta": {
+                    "uiType": "number",
+                    "typeSummary": "number",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      7
+                    ]
+                  }
+                },
+                {
+                  "kind": "column",
+                  "name": "score_str",
+                  "meta": {
+                    "uiType": "string",
+                    "typeSummary": "string",
+                    "nullable": true,
+                    "partial": true,
+                    "sample": [
+                      "high"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "column",
+              "name": "settings",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "dark"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "settings_color",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "red"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "settings_notifications",
+              "meta": {
+                "uiType": "boolean",
+                "typeSummary": "boolean",
+                "types": [
+                  "boolean"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  true
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "source_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "custom-u6-payload-id"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "status",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": true,
+                "partial": true,
+                "sample": [
+                  "active"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags",
+              "meta": {
+                "uiType": "ref",
+                "refTable": "users_tags",
+                "cardinality": "1:N",
+                "sample": [
+                  "R_d37d8df7d1cd4983ad6a0ed72e3f109d"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 8,
+            "column": "record_id"
+          },
+          "children": [
+            {
+              "kind": "key",
+              "name": "u1",
+              "meta": {
+                "column": "record_id",
+                "value": "u1"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u2",
+              "meta": {
+                "column": "record_id",
+                "value": "u2"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u3",
+              "meta": {
+                "column": "record_id",
+                "value": "u3"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u4",
+              "meta": {
+                "column": "record_id",
+                "value": "u4"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u5",
+              "meta": {
+                "column": "record_id",
+                "value": "u5"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u6",
+              "meta": {
+                "column": "record_id",
+                "value": "u6"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u7",
+              "meta": {
+                "column": "record_id",
+                "value": "u7"
+              }
+            },
+            {
+              "kind": "key",
+              "name": "u8",
+              "meta": {
+                "column": "record_id",
+                "value": "u8"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 6
+          },
+          "children": [
+            {
+              "kind": "reference",
+              "name": "users.enrolled_courses -> users_enrolled_courses",
+              "meta": {
+                "from": "users.enrolled_courses",
+                "to": "users_enrolled_courses",
+                "count": 1
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "users.followers -> users_followers",
+              "meta": {
+                "from": "users.followers",
+                "to": "users_followers",
+                "count": 1
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "users.friends -> users_friends",
+              "meta": {
+                "from": "users.friends",
+                "to": "users_friends",
+                "count": 1
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "users.matrix -> users_matrix",
+              "meta": {
+                "from": "users.matrix",
+                "to": "users_matrix",
+                "count": 1
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "users.orders -> users_orders",
+              "meta": {
+                "from": "users.orders",
+                "to": "users_orders",
+                "count": 2
+              }
+            },
+            {
+              "kind": "reference",
+              "name": "users.tags -> users_tags",
+              "meta": {
+                "from": "users.tags",
+                "to": "users_tags",
+                "count": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number · boolean · ref · mixed",
+            "count": 5
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_enrolled_courses",
+      "meta": {
+        "rowCount": 3,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_enrolled_courses\" (\n    \"enrolled_courses__index_\" BIGINT\n    , \"enrolled_courses__rid_\" VARCHAR(65535)\n    , \"enrolled_courses_grade\" VARCHAR(65535)\n    , \"enrolled_courses_record_id\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "enrolled_courses__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1,
+                  2
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "enrolled_courses__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "enrolled_courses_grade",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "A",
+                  "B"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "enrolled_courses_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "CS101",
+                  "MATH200",
+                  "PHYS150"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_followers",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_followers\" (\n    \"followers__index_\" BIGINT\n    , \"followers__rid_\" VARCHAR(65535)\n    , \"followers_record_id\" VARCHAR(65535)\n    , \"followers_value\" BOOLEAN\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "followers__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "followers__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "followers_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u1",
+                  "u5"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "followers_value",
+              "meta": {
+                "uiType": "boolean",
+                "typeSummary": "boolean",
+                "types": [
+                  "boolean"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  true
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number · boolean",
+            "count": 3
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_friends",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_friends\" (\n    \"friends__index_\" BIGINT\n    , \"friends__rid_\" VARCHAR(65535)\n    , \"friends_id\" VARCHAR(65535)\n    , \"friends_since\" BIGINT\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "friends__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "friends__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "friends_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "u2",
+                  "u3"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "friends_since",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  2020,
+                  2021
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_matrix",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_matrix\" (\n    \"matrix__index_\" BIGINT\n    , \"matrix__rid_\" VARCHAR(65535)\n    , \"matrix__val_\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "matrix__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "matrix__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "matrix__val_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_matrix__val_",
+      "meta": {
+        "rowCount": 4,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_matrix__val_\" (\n    \"matrix__val___index_\" BIGINT\n    , \"matrix__val___rid_\" VARCHAR(65535)\n    , \"matrix__val___val_\" BIGINT\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "matrix__val___index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "matrix__val___rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "matrix__val___val_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  1,
+                  2,
+                  3,
+                  4
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_orders",
+      "meta": {
+        "rowCount": 1,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_orders\" (\n    \"orders__index_\" BIGINT\n    , \"orders__rid_\" VARCHAR(65535)\n    , \"orders_items\" VARCHAR(65535)\n    , \"orders_order_id\" VARCHAR(65535)\n    , \"orders_record_id\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "orders__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_items",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_order_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "ORD-1"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "-o1"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_orders_items",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_orders_items\" (\n    \"orders_items__index_\" BIGINT\n    , \"orders_items__rid_\" VARCHAR(65535)\n    , \"orders_items_qty\" BIGINT\n    , \"orders_items_record_id\" VARCHAR(65535)\n    , \"orders_items_sku\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "orders_items__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_items__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_items_qty",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  1,
+                  3
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_items_record_id",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "-i1",
+                  "-i2"
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "orders_items_sku",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "BOOK-1",
+                  "PEN-2"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    },
+    {
+      "kind": "table",
+      "name": "users_tags",
+      "meta": {
+        "rowCount": 2,
+        "ddl": "CREATE TABLE IF NOT EXISTS \"public\".\"users_tags\" (\n    \"tags__index_\" BIGINT\n    , \"tags__rid_\" VARCHAR(65535)\n    , \"tags__val_\" VARCHAR(65535)\n);"
+      },
+      "children": [
+        {
+          "kind": "columns",
+          "name": "Columns",
+          "children": [
+            {
+              "kind": "column",
+              "name": "tags__index_",
+              "meta": {
+                "uiType": "number",
+                "typeSummary": "number",
+                "types": [
+                  "number"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  0,
+                  1
+                ]
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags__rid_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": []
+              }
+            },
+            {
+              "kind": "column",
+              "name": "tags__val_",
+              "meta": {
+                "uiType": "string",
+                "typeSummary": "string",
+                "types": [
+                  "string"
+                ],
+                "nullable": false,
+                "partial": false,
+                "sample": [
+                  "red",
+                  "blue"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "keys",
+          "name": "Keys",
+          "meta": {
+            "count": 0,
+            "empty": true
+          },
+          "children": []
+        },
+        {
+          "kind": "references",
+          "name": "References",
+          "meta": {
+            "count": 0
+          },
+          "children": []
+        },
+        {
+          "kind": "types",
+          "name": "Types",
+          "meta": {
+            "summary": "string · number",
+            "count": 2
+          }
+        }
+      ]
+    }
+  ]
+}
